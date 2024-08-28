@@ -85,11 +85,13 @@ func main() {
 		panic("failed to connect to database")
 	}
 
-	// Define the custom filter and paginate parameters
+	// Define the custom filter and paginate parameters with GROUP BY and HAVING
 	params := gormdt.FilterAndPaginateCustomQueryParam{
 		DB:        db,
-		BaseQuery: "SELECT name, email FROM users",
+		BaseQuery: "SELECT name, email, COUNT(*) as email_count FROM users",
 		Where:     "status = 'active'",
+		GroupBy:   "name, email",
+		Having:    "COUNT(email) > 1", // Example HAVING condition
 		Fields:    []string{"name", "email"},
 		Request: gormdt.DataTableRequest{
 			Draw:   1,
@@ -111,6 +113,7 @@ func main() {
 	fmt.Printf("Filtered Records: %d\n", response.RecordsFiltered)
 	fmt.Printf("Data: %+v\n", response.Data)
 }
+
 ```
 
 ## Data Structures
